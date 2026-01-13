@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fortex Login with Simple CAPTCHA</title>
+<style>
+  body {
+    font-family: Arial, sans-serif;
+    background: url('https://static.vecteezy.com/system/resources/thumbnails/002/104/366/small/abstract-modern-diagonal-stripes-red-background-and-texture-with-lines-vector.jpg') no-repeat center center fixed;
+    background-size: cover;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    color: white;
+  }
+
+  .header {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: white;
+    text-decoration: none;
+  }
+
+  .container {
+    background: rgba(0,0,0,0.7);
+    padding: 40px;
+    border-radius: 10px;
+    text-align: center;
+    width: 320px;
+    display: none; /* Hidden by default */
+  }
+
+  .active {
+    display: block;
+  }
+
+  button {
+    padding: 12px 20px;
+    background: #ff4c4c;
+    border: none;
+    border-radius: 5px;
+    color: white;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 10px;
+  }
+
+  input {
+    width: 80%;
+    padding: 10px;
+    margin: 10px 0;
+    border: none;
+    border-radius: 5px;
+  }
+
+  .password-container {
+    position: relative;
+  }
+
+  .toggle-password {
+    position: absolute;
+    right: 15px; /* shifted a bit left from edge */
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    color: #fff;
+    font-size: 16px;
+    user-select: none;
+  }
+
+  #message {
+    color: #ff8080;
+    margin-top: 10px;
+  }
+</style>
+</head>
+<body>
+
+<a href="https://fortex-shop.fourthwall.com" class="header">Fortex</a>
+
+<!-- Step 1: Simple Click CAPTCHA -->
+<div class="container active" id="captchaContainer">
+  <h2>Verify CAPTCHA</h2>
+  <p>Click the button below to verify you are not a bot:</p>
+  <button onclick="showLogin()">✅ I'm not a bot</button>
+</div>
+
+<!-- Step 2: Login / Sign Up -->
+<div class="container" id="authContainer">
+  <h2>Login / Sign Up</h2>
+  <input type="text" id="username" placeholder="Username">
+  
+  <div class="password-container">
+    <input type="password" id="password" placeholder="Password">
+    <span class="toggle-password" onclick="togglePassword()">👁️</span>
+  </div>
+
+  <button onclick="login()">Login</button>
+  <button onclick="signup()">Sign Up</button>
+  <p id="message"></p>
+</div>
+
+<script>
+  const redirectURL = "https://fortex-shop.fourthwall.com";
+
+  // Step 1: Show login page after CAPTCHA click
+  function showLogin() {
+    document.getElementById('captchaContainer').classList.remove('active');
+    document.getElementById('authContainer').classList.add('active');
+  }
+
+  // Password toggle
+  function togglePassword() {
+    const passwordInput = document.getElementById('password');
+    passwordInput.type = passwordInput.type === "password" ? "text" : "password";
+  }
+
+  // Sign Up function
+  function signup() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+
+    if(username && password) {
+      if(localStorage.getItem(username)) {
+        document.getElementById('message').textContent = "User already exists!";
+      } else {
+        localStorage.setItem(username, password);
+        document.getElementById('message').textContent = "Sign Up successful! Redirecting...";
+        setTimeout(() => {
+          window.location.href = redirectURL;
+        }, 1000);
+      }
+    } else {
+      document.getElementById('message').textContent = "Please enter username and password.";
+    }
+  }
+
+  // Login function
+  function login() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const storedPassword = localStorage.getItem(username);
+
+    if(storedPassword && storedPassword === password) {
+      document.getElementById('message').textContent = "Login successful! Redirecting...";
+      setTimeout(() => {
+        window.location.href = redirectURL;
+      }, 1000);
+    } else {
+      document.getElementById('message').textContent = "Invalid username or password.";
+    }
+  }
+</script>
+
+</body>
+</html>
